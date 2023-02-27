@@ -5,6 +5,7 @@ const tourRouter = require('./routes/tours');
 const userRouter = require('./routes/users');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errors');
+const { signUp, login } = require('./controllers/authentication');
 
 const app = express();
 
@@ -18,6 +19,8 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.static(`${__dirname}/public`));
 
 /////// ROUTES
+userRouter.route('/signup').post(signUp);
+userRouter.route('/login').post(login);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
