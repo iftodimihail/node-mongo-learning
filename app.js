@@ -4,7 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
-const hpp = require('hpps');
+const hpp = require('hpp');
 
 const tourRouter = require('./routes/tours');
 const userRouter = require('./routes/users');
@@ -30,7 +30,7 @@ app.use(express.static(`${__dirname}/public`));
 
 // Limit requirest from the same IP
 const limiter = rateLimit({
-  max: 2,
+  max: 100,
   windowMs: 60 * 60 * 1000,
   message: 'Too many requirest from this IP, please try again in an hour!',
 });
