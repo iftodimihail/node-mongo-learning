@@ -1,5 +1,6 @@
 const express = require('express');
 const { protectRoute, restrictTo } = require('../controllers/authentication');
+const reviewsRouter = require('./reviews');
 
 const {
   getAllTours,
@@ -13,8 +14,11 @@ const {
 
 const tourRouter = express.Router();
 
+tourRouter.use('/:tourId/reviews', reviewsRouter);
+
 tourRouter.route('/stats').get(protectRoute, getToursStats);
 tourRouter.route('/monthly-plan/:year').get(protectRoute, getMonthlyPlan);
+
 tourRouter
   .route('/:id')
   .get(protectRoute, getTour)

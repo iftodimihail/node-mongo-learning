@@ -6,10 +6,11 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
-const tourRouter = require('./routes/tours');
-const userRouter = require('./routes/users');
+const toursRouter = require('./routes/tours');
+const usersRouter = require('./routes/users');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errors');
+const reviewsRouter = require('./routes/reviews');
 
 const app = express();
 /////// MIDDLEWARES
@@ -51,8 +52,9 @@ app.use(
 );
 
 /////// ROUTES
-app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
+app.use('/api/v1/tours', toursRouter);
+app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/reviews', reviewsRouter);
 
 app.all('*', (req, res, next) => {
   const error = new Error(`Can not find ${req.originalUrl} on this server!`);

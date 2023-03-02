@@ -1,80 +1,13 @@
 const Tour = require('../models/tour');
-const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
+const Review = require('../models/review');
 const catchAsync = require('../utils/catchAsync');
+const handlerFactory = require('../utils/handlerFactory');
 
-const getAllTours = catchAsync(async (req, res) => {
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .paginate();
-
-  const tours = await features.dbQuery;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
-
-const getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
-
-  if (!tour) {
-    return next(new AppError('No tour found with this ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
-const createTour = catchAsync(async (req, res) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'succes',
-    data: {
-      tours: newTour,
-    },
-  });
-});
-
-const updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!tour) {
-    return next(new AppError('No tour found with this ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'succes',
-    data: {
-      tour,
-    },
-  });
-});
-
-const deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndRemove(req.params.id);
-
-  if (!tour) {
-    return next(new AppError('No tour found with this ID', 404));
-  }
-
-  res.status(204).json({
-    status: 'succes',
-  });
-});
+const getAllTours = handlerFactory.getAll(Tour);
+const getTour = handlerFactory.getOne(Tour, { path: 'reviews' });
+const createTour = handlerFactory.createOne(Tour);
+const updateTour = handlerFactory.updateOne(Tour);
+const deleteTour = handlerFactory.deleteOne(Tour);
 
 const getToursStats = catchAsync(async (req, res) => {
   const stats = await Tour.aggregate([
@@ -152,6 +85,22 @@ const getMonthlyPlan = catchAsync(async (req, res) => {
   });
 });
 
+const createReview = catchAsync(async (req, res) => {
+  const review = await Review.create({
+    review: req.body.review,
+    rating: req.body.rating,
+    user: req.user.id,
+    tour: req.params.tourId,
+  });
+
+  res.status(201).json({
+    status: 'success',
+    data: {
+      review,
+    },
+  });
+});
+
 module.exports = {
   getAllTours,
   getTour,
@@ -160,4 +109,5 @@ module.exports = {
   createTour,
   getToursStats,
   getMonthlyPlan,
+  createReview,
 };
