@@ -22,6 +22,11 @@ const getUser = handlerFactory.getOne(User);
 const updateUser = handlerFactory.updateOne(User);
 const deleteUser = handlerFactory.deleteOne(User);
 
+const getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 const updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates'));
@@ -58,4 +63,5 @@ module.exports = {
   deleteUser,
   updateMe,
   deleteMe,
+  getMe,
 };

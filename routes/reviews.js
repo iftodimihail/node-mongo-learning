@@ -11,11 +11,14 @@ const {
 
 const reviewsRouter = express.Router({ mergeParams: true });
 
+reviewsRouter.use(protectRoute);
+
 reviewsRouter
   .route('/:id')
   .get(getReview)
-  .delete(deleteReview)
-  .patch(updateReview);
+  .patch(restrictTo('user', 'admin'), updateReview)
+  .delete(restrictTo('user', 'admin'), deleteReview);
+
 reviewsRouter
   .route('/')
   .get(getReviews)
